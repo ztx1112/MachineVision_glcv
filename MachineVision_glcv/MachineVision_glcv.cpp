@@ -2,7 +2,8 @@
 //
 
 #include "stdafx.h"
-
+#include"resource.h"
+#include<Winuser.h>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);	//窗口大小改变回调函数
 void processInput(GLFWwindow *window);		//按键回调
@@ -11,6 +12,11 @@ void commandFun(WPARAM wParam, LPARAM lParam);	//按钮回调
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+HWND hwnd;			//全局窗口句柄
+HDC hdc;			//全局设备对象
+HGLRC hglrc;		//全局渲染对象
+HINSTANCE hinstance;	//去局窗口实例
+
 
 int main()
 {
@@ -30,6 +36,15 @@ int main()
 		glfwTerminate();
 		return -1;
 	}
+	//hwnd = glfwGetWin32Window(window);
+	hwnd = GetActiveWindow();
+	if (!hwnd)
+		std::cout << "hwnd null";
+	hinstance = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE);
+	HMENU hMenu = LoadMenu(hinstance, MAKEINTRESOURCE(IDR_MENU1));
+	SetMenu(hwnd, hMenu);
+
+
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCammandCallback(window, commandFun);
@@ -41,6 +56,8 @@ int main()
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
+
+	std::cout << "The Opencv version used is: " << cv::getVersionString();
 
 	// render loop
 	// -----------
@@ -67,7 +84,7 @@ int main()
 	return 0;
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+// 处理所有输入：查询GLFW此帧是否按下/释放相关键并根据是的
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window)
 {
@@ -75,18 +92,28 @@ void processInput(GLFWwindow *window)
 		glfwSetWindowShouldClose(window, true);
 }
 
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
+// glfw：每当窗口大小改变时（通过操作系统或用户调整大小），这个回调函数就会执行
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-	// make sure the viewport matches the new window dimensions; note that width and 
-	// height will be significantly larger than specified on retina displays.
+	//确保视窗与新的视窗尺寸相匹配；注意宽度和
+	//高度将明显大于视网膜显示器上指定的高度。
 	glViewport(0, 0, width, height);
 }
 
+// 按钮事件回调函数
+// ---------------------------------------------------------------------------------------------
 void commandFun(WPARAM wParam, LPARAM lParam)
 {
 	WORD id = LOWORD(wParam);
-	if (id == 0)
-		return;
+	switch (id)
+	{
+	case IDM_FILE_NEW:
+		break;
+	default:
+		MessageBox(hwnd, L"No Command Handle", 0, MB_ICONEXCLAMATION);
+		break;
+	}
+	return;
 }
+		
