@@ -3,11 +3,20 @@
 
 #include "stdafx.h"
 #include"resource.h"
-#include<Winuser.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+#include"Shader.h"
+
+
+using namespace cv;
+using namespace ImGui;
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);	//窗口大小改变回调函数
 void processInput(GLFWwindow *window);		//按键回调
-void commandFun(WPARAM wParam, LPARAM lParam);	//按钮回调
+
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -16,16 +25,23 @@ HWND hwnd;			//全局窗口句柄
 HDC hdc;			//全局设备对象
 HGLRC hglrc;		//全局渲染对象
 HINSTANCE hinstance;	//去局窗口实例
+Zopengl::Shader *shader;
+cv::Mat matdata;
+cv::VideoCapture *capture;
+
+double win_width = SCR_WIDTH;
+double win_height = SCR_HEIGHT;
+
 
 
 int main()
 {
+	const char* glsl_version = "#version 130";
 	// glfw: initialize and configure
 	// ------------------------------
 	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// glfw window creation
 	// --------------------
@@ -33,21 +49,18 @@ int main()
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
+		std::cin.get();
 		glfwTerminate();
 		return -1;
 	}
-	//hwnd = glfwGetWin32Window(window);
-	hwnd = GetActiveWindow();
+	hwnd = glfwGetWin32Window(window);
 	if (!hwnd)
 		std::cout << "hwnd null";
 	hinstance = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE);
-	HMENU hMenu = LoadMenu(hinstance, MAKEINTRESOURCE(IDR_MENU1));
-	SetMenu(hwnd, hMenu);
-
 
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwSetCammandCallback(window, commandFun);
+	glfwSwapInterval(1);
 
 	// glad: load all OpenGL function pointers
 	// ---------------------------------------
@@ -57,7 +70,54 @@ int main()
 		return -1;
 	}
 
-	std::cout << "The Opencv version used is: " << cv::getVersionString();
+	capture = new cv::VideoCapture(0, cv::CAP_ANY);
+	*capture >> matdata; 
+	std::cout << matdata.size;
+
+	Mat data;
+	cvtColor(matdata, data, COLOR_BGR2GRAY);
+	cvtColor(data, matdata, COLOR_GRAY2RGB);
+	capture->release();
+	delete capture;
+
+
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsClassic();
+
+	// Setup Platform/Renderer bindings
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init(glsl_version);
+
+
+	std::cout << std::endl;
+	std::cout << "The Opencv version used is: " << cv::getVersionString() << std::endl;
+
+	bool show_demo_window = true;
+	bool show_another_window = false;
+	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	// 为当前绑定的纹理对象设置环绕、过滤方式
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// 加载并生成纹理
+	int width, height, nrChannels;
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, matdata.cols, matdata.rows, 0, GL_RGB, GL_UNSIGNED_BYTE, matdata.data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
 
 	// render loop
 	// -----------
@@ -66,16 +126,33 @@ int main()
 		// input
 		// -----
 		processInput(window);
+		glfwPollEvents();
 
-		// render
-		// ------
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		// Start the Dear ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		//ImVec2 pos{ 0,0 };
+		//SetNextWindowPos(pos);
+		//ImVec2 size{ 800,600 };
+		//SetNextWindowSize(size);
+
+		Begin("hello");
+		ImGui::Image((void *)(intptr_t)texture,ImVec2(matdata.cols, matdata.rows));
+		End();
+		// Rendering
+		ImGui::Render();
+		int display_w, display_h;
+		glfwGetFramebufferSize(window, &display_w, &display_h);
+		glViewport(0, 0, display_w, display_h);
+		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT);
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
-		glfwPollEvents();
+
 	}
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
@@ -101,19 +178,5 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
-// 按钮事件回调函数
-// ---------------------------------------------------------------------------------------------
-void commandFun(WPARAM wParam, LPARAM lParam)
-{
-	WORD id = LOWORD(wParam);
-	switch (id)
-	{
-	case IDM_FILE_NEW:
-		break;
-	default:
-		MessageBox(hwnd, L"No Command Handle", 0, MB_ICONEXCLAMATION);
-		break;
-	}
-	return;
-}
+
 		

@@ -8,6 +8,7 @@
 #include "targetver.h"
 
 #include<Windows.h>
+#include<Winuser.h>
 #include <stdio.h>
 #include <tchar.h>
 
@@ -16,8 +17,24 @@
 #include <string>
 #include <opencv2\opencv.hpp>
 
-#include "glad\glad.h"
+#include <glad\glad.h>
+//#include <gl/GLU.h>
 #include<GLFW\glfw3.h>
+#define  IMGUI_IMPL_OPENGL_LOADER_GLAD
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
+
+#include<opencv2\videoio.hpp>
+#include <opencv2\opencv.hpp>
+#include <opencv2\core\opengl.hpp>
+#include <opencv2\core\types.hpp>
+
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
