@@ -1,12 +1,10 @@
-// MachineVision_glcv.cpp : ¶¨Òå¿ØÖÆÌ¨Ó¦ÓÃ³ÌĞòµÄÈë¿Úµã¡£
+ï»¿// MachineVision_glcv.cpp : å®šä¹‰æ§åˆ¶å°åº”ç”¨ç¨‹åºçš„å…¥å£ç‚¹ã€‚
 //
-
 #include "stdafx.h"
 #include"resource.h"
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-
+#include "cvclass/DetectionFrame.h"
 #include"Shader.h"
 
 
@@ -14,38 +12,53 @@ using namespace cv;
 using namespace ImGui;
 
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);	//´°¿Ú´óĞ¡¸Ä±ä»Øµ÷º¯Êı
-void processInput(GLFWwindow *window);		//°´¼ü»Øµ÷
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);	//çª—å£å¤§å°æ”¹å˜å›è°ƒå‡½æ•°
+void keyboard_callback(GLFWwindow*, int, int, int,int);
+void mousebutton_callback(GLFWwindow*, int, int, int);
+void glfw_error_callback(int, const char*);
 
 
-// settings
+void showmenu();
+void showframe();
+DetectionFrame showimage(DetectionFrame&);
+
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-HWND hwnd;			//È«¾Ö´°¿Ú¾ä±ú
-HDC hdc;			//È«¾ÖÉè±¸¶ÔÏó
-HGLRC hglrc;		//È«¾ÖäÖÈ¾¶ÔÏó
-HINSTANCE hinstance;	//È¥¾Ö´°¿ÚÊµÀı
+HWND hwnd;			//å…¨å±€çª—å£å¥æŸ„
+HINSTANCE hinstance;	//å»å±€çª—å£å®ä¾‹
 Zopengl::Shader *shader;
-cv::Mat matdata;
-cv::VideoCapture *capture;
-
 double win_width = SCR_WIDTH;
 double win_height = SCR_HEIGHT;
+float titleheigh = 45;
+float border = 4;
+int state = 0;
+ImVec2 beginpos;
+ImVec2 endpos;
+ImVec2 mousepos;
+ImGuiIO io;
+ImFont* font2;
+ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+vector<DetectionFrame> Deteframes;
+int teststate;
+
+vector<unsigned int> textures;
 
 
+string test = "ç¤ºä¾‹";
 
 int main()
 {
-	const char* glsl_version = "#version 130";
+	const char* glsl_version = "#version 330";
 	// glfw: initialize and configure
 	// ------------------------------
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
 	// glfw window creation
 	// --------------------
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Machine Vision", NULL, NULL);
+
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -53,95 +66,82 @@ int main()
 		glfwTerminate();
 		return -1;
 	}
+#ifdef _WIN32
 	hwnd = glfwGetWin32Window(window);
 	if (!hwnd)
 		std::cout << "hwnd null";
 	hinstance = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE);
-
+#endif
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetKeyCallback(window, keyboard_callback);
+	//glfwSetMouseButtonCallback(window, mousebutton_callback);
 	glfwSwapInterval(1);
+	glfwSetErrorCallback(glfw_error_callback);
 
 	// glad: load all OpenGL function pointers
-	// ---------------------------------------
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
 
-	capture = new cv::VideoCapture(0, cv::CAP_ANY);
-	*capture >> matdata; 
-	std::cout << matdata.size;
-
-	Mat data;
-	cvtColor(matdata, data, COLOR_BGR2GRAY);
-	cvtColor(data, matdata, COLOR_GRAY2RGB);
-	capture->release();
-	delete capture;
+	ImGui::CreateContext();
+	io = GetIO();
+	GetIO().Fonts->AddFontFromFileTTF("msyh.ttf", 14, NULL, GetIO().Fonts->GetGlyphRangesChineseFull());
 
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
 	// Setup Dear ImGui style
-	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsClassic();
+	//ImGui::StyleColorsDark();
+	ImGui::StyleColorsClassic();
 
-	// Setup Platform/Renderer bindings
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init(glsl_version);
-
 
 	std::cout << std::endl;
 	std::cout << "The Opencv version used is: " << cv::getVersionString() << std::endl;
 
-	bool show_demo_window = true;
-	bool show_another_window = false;
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	Deteframes.push_back(DetectionFrame());
 
-
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	// Îªµ±Ç°°ó¶¨µÄÎÆÀí¶ÔÏóÉèÖÃ»·ÈÆ¡¢¹ıÂË·½Ê½
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// ¼ÓÔØ²¢Éú³ÉÎÆÀí
-	int width, height, nrChannels;
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, matdata.cols, matdata.rows, 0, GL_RGB, GL_UNSIGNED_BYTE, matdata.data);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
+	Deteframes[0].camera.open(0);
+	Deteframes[0].camerarunstate = "multi";
 
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
 	{
-		// input
-		// -----
-		processInput(window);
+
 		glfwPollEvents();
+
 
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		//ImVec2 pos{ 0,0 };
-		//SetNextWindowPos(pos);
-		//ImVec2 size{ 800,600 };
-		//SetNextWindowSize(size);
 
-		Begin("hello");
-		ImGui::Image((void *)(intptr_t)texture,ImVec2(matdata.cols, matdata.rows));
-		End();
+		showmenu();
+
+		ImVec2 pos{ 0,20 };
+		SetNextWindowPos(pos);
+
+		if (Deteframes.size() > 0)
+		{
+			for (vector<DetectionFrame>::iterator iter = Deteframes.begin(); iter != Deteframes.end(); ++iter)
+			{
+				auto a = *iter;
+				*iter = showimage(a);
+			}
+		}
+		showframe();
+
 		// Rendering
 		ImGui::Render();
+
 		int display_w, display_h;
 		glfwGetFramebufferSize(window, &display_w, &display_h);
 		glViewport(0, 0, display_w, display_h);
@@ -149,9 +149,16 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-		// -------------------------------------------------------------------------------
+
 		glfwSwapBuffers(window);
+		
+		if (Deteframes.size() > 0)
+		{
+			for (vector<DetectionFrame>::iterator iter = Deteframes.begin(); iter != Deteframes.end(); ++iter)
+			{
+				glDeleteTextures(1, &iter->texture);
+			}
+		}
 
 	}
 
@@ -161,22 +168,195 @@ int main()
 	return 0;
 }
 
-// ´¦ÀíËùÓĞÊäÈë£º²éÑ¯GLFW´ËÖ¡ÊÇ·ñ°´ÏÂ/ÊÍ·ÅÏà¹Ø¼ü²¢¸ù¾İÊÇµÄ
+// å¤„ç†æ‰€æœ‰è¾“å…¥ï¼šæŸ¥è¯¢GLFWæ­¤å¸§æ˜¯å¦æŒ‰ä¸‹/é‡Šæ”¾ç›¸å…³é”®å¹¶æ ¹æ®æ˜¯çš„
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
+void keyboard_callback(GLFWwindow *window,int key,int scancode,int action,int modsBit)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	switch (key)
+	{
+	case GLFW_KEY_ESCAPE:
+	{
 		glfwSetWindowShouldClose(window, true);
+	}
+	default:
+		break;
+	}
+
 }
 
-// glfw£ºÃ¿µ±´°¿Ú´óĞ¡¸Ä±äÊ±£¨Í¨¹ı²Ù×÷ÏµÍ³»òÓÃ»§µ÷Õû´óĞ¡£©£¬Õâ¸ö»Øµ÷º¯Êı¾Í»áÖ´ĞĞ
+void mousebutton_callback(GLFWwindow *window, int button, int action, int modsBit)
+{
+	
+	switch (button)
+	{
+	case GLFW_MOUSE_BUTTON_LEFT:
+	{
+		switch (action)
+		{
+		case GLFW_PRESS:
+		{
+
+		}
+		case GLFW_RELEASE:
+		{
+			state = 1;
+		}
+		default:
+			break;
+		}
+		return;
+	}
+	case GLFW_MOUSE_BUTTON_RIGHT:
+	{
+		switch (action)
+		{
+		case GLFW_PRESS:
+		{
+
+		}
+		case GLFW_RELEASE:
+		{
+			state = 2;
+		}
+		default:
+			break;
+		}
+		return;
+	}
+	default:
+		break;
+	}
+}
+
+void glfw_error_callback(int errcode, const char * msg)
+{
+	cout << endl;
+	cout << "ERROR: " << errcode << "  " << msg << endl;
+}
+
+// glfwï¼šæ¯å½“çª—å£å¤§å°æ”¹å˜æ—¶ï¼ˆé€šè¿‡æ“ä½œç³»ç»Ÿæˆ–ç”¨æˆ·è°ƒæ•´å¤§å°ï¼‰ï¼Œè¿™ä¸ªå›è°ƒå‡½æ•°å°±ä¼šæ‰§è¡Œ
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-	//È·±£ÊÓ´°ÓëĞÂµÄÊÓ´°³ß´çÏàÆ¥Åä£»×¢Òâ¿í¶ÈºÍ
-	//¸ß¶È½«Ã÷ÏÔ´óÓÚÊÓÍøÄ¤ÏÔÊ¾Æ÷ÉÏÖ¸¶¨µÄ¸ß¶È¡£
+	//ç¡®ä¿è§†çª—ä¸æ–°çš„è§†çª—å°ºå¯¸ç›¸åŒ¹é…ï¼›æ³¨æ„å®½åº¦å’Œ
+	//é«˜åº¦å°†æ˜æ˜¾å¤§äºè§†ç½‘è†œæ˜¾ç¤ºå™¨ä¸ŠæŒ‡å®šçš„é«˜åº¦ã€‚
 	glViewport(0, 0, width, height);
 }
 
 
 		
+void showmenu()
+{
+	// Menu Bar
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("Menu"))
+		{
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu(test.c_str()))
+		{
+			ImGui::MenuItem("Main menu bar");
+			ImGui::MenuItem("Console");
+			ImGui::MenuItem("Log");
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+}
+
+
+void showframe()
+{
+	ImGui::Begin("othe frame");
+	ImGui::Text(u8"æµ‹è¯•æ–‡æœ¬\næµ‹è¯•å·æˆ–æˆ–æˆ–æˆ–æˆ–");
+	if (IsItemClicked(0))
+	{
+		cout << GetIO().MousePos.x << "   " << GetIO().MousePos.y << endl;
+	}
+	ImGui::End();
+}
+
+
+DetectionFrame showimage(DetectionFrame &userdata)
+{
+	if (userdata.camerarunstate == "single")
+	{
+		if(userdata.camerastate==0)
+		{
+			userdata.camera >> userdata.imagesource;
+			userdata.camerastate = 1;
+		}
+	}
+	if (userdata.camerarunstate == "multi")
+	{
+		userdata.camera >> userdata.imagesource;
+		userdata.camerastate = 0;
+	}
+
+	Mat data;
+	cvtColor(userdata.imagesource, data, COLOR_BGR2GRAY);
+	if (userdata.state == 0)
+		cvtColor(data, userdata.image, COLOR_GRAY2RGB);
+
+	if (userdata.rois.size() > 0)
+	{
+		for (vector<ImVec4>::iterator iter = userdata.rois.begin(); iter != userdata.rois.end(); ++iter)
+		{
+			cv::rectangle(userdata.image, Point2f(iter->x, iter->y), Point2f(iter->z, iter->w), Scalar(255, 0, 0), 1, LINE_8, 0);
+		}
+	}
+	glGenTextures(1, &userdata.texture);
+	glBindTexture(GL_TEXTURE_2D, userdata.texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, userdata.image.cols, userdata.image.rows, 0, GL_RGB, GL_UNSIGNED_BYTE, userdata.image.data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	ImGuiWindowFlags winflag = ImGuiWindowFlags_HorizontalScrollbar;
+	Begin(userdata.name.c_str(), 0, userdata.winflag);
+	ImVec2 size{
+		static_cast<float>(userdata.image.cols),
+		static_cast<float>(userdata.image.rows) };
+	ImGui::Image((void *)(intptr_t)userdata.texture, size);
+
+	auto scrollx = GetScrollX();
+	auto scrolly = GetScrollY();
+
+	mousepos.x = GetIO().MousePos.x - GetCursorScreenPos().x;
+	mousepos.y = GetIO().MousePos.y - titleheigh - border + scrolly;
+
+	if (IsItemHovered())
+	{
+		if (GetIO().MouseDown[0] && userdata.state == 0)
+		{
+			beginpos = mousepos;
+			userdata.state=FRAMESTATE_DRAWINGRECT;
+		}
+		else
+		{
+			if (GetIO().MouseDown[0] && userdata.state == FRAMESTATE_DRAWINGRECT)
+			{
+				cvtColor(data, userdata.image, COLOR_GRAY2RGB);
+				cv::rectangle(userdata.image, Point2f(beginpos.x, beginpos.y), Point2f(mousepos.x, mousepos.y), Scalar(255, 0, 0), 1, LINE_8, 0);
+			}
+		}
+		if (GetIO().MouseReleased[0])
+		{
+			if (userdata.state == FRAMESTATE_DRAWINGRECT)
+			{
+				endpos = mousepos;
+				userdata.rois.push_back(ImVec4(beginpos.x, beginpos.y, endpos.x, endpos.y));
+				userdata.state = 0;
+			}
+			else
+			{
+				userdata.state = 0;
+			}
+		}
+	}
+	End();
+
+	return userdata;
+}

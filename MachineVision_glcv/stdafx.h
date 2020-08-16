@@ -15,15 +15,16 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
+
 #include <opencv2\opencv.hpp>
 
 #include <glad\glad.h>
-//#include <gl/GLU.h>
 #include<GLFW\glfw3.h>
 #define  IMGUI_IMPL_OPENGL_LOADER_GLAD
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_glfw.h"
-#include "imgui/imgui_impl_opengl3.h"
+#include <imgui.h>
+#include <examples/imgui_impl_opengl3.h>
+#include <examples/imgui_impl_glfw.h>
 
 
 #include<opencv2\videoio.hpp>
