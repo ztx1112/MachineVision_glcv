@@ -1,7 +1,6 @@
 #pragma once
 
-
-#include "glad/glad.h"
+#include <glad/glad.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -13,26 +12,25 @@ namespace Zopengl
 {
 	class Shader
 	{
-		//´ËäÖÈ¾Æ÷ ID
+		//ï¿½ï¿½ï¿½ï¿½È¾ï¿½ï¿½ ID
 		unsigned int ID;
 
 	public:
 		Shader();
 
-		//vertexpath :¶¥µã×ÅÉ«Æ÷Â·¾¶
-		//fragmentpath :Æ¬¶Î×ÅÉ«Æ÷Â·¾¶
-		Shader(const GLchar* vertexpath, const GLchar* fragmentpath);	
+		//vertexpath :ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½Â·ï¿½ï¿½
+		//fragmentpath :Æ¬ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½Â·ï¿½ï¿½
+		Shader(const GLchar *vertexpath, const GLchar *fragmentpath);
 
-		//Ê¹ÓÃ´ËäÖÈ¾Æ÷
+		//Ê¹ï¿½Ã´ï¿½ï¿½ï¿½È¾ï¿½ï¿½
 		void Use();
-		//·µ»Ø´Ë×ÅÉ«Æ÷ID
+		//ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½É«ï¿½ï¿½ID
 		unsigned int getid();
 
-		// uniform¹¤¾ßº¯Êý
-		void setBool(const std::string& name, bool value) const;
-		void setInt(const std::string& name, int value) const;
-		void setFloat(const std::string& name, float value) const;
+		// uniformï¿½ï¿½ï¿½ßºï¿½ï¿½ï¿½
+		void setBool(const std::string &name, bool value) const;
+		void setInt(const std::string &name, int value) const;
+		void setFloat(const std::string &name, float value) const;
 	};
 
-}
-
+} // namespace Zopengl

@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{76434e4d-4fce-4f92-b1a7-676e7656c504}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dll">
+      <UniqueIdentifier>{c85e8bad-45d4-4747-af13-2685f838a05c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -33,32 +39,29 @@
     <ClInclude Include="cvclass\DetectionFrame.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="D:\SDK\imgui\imconfig.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="F:\SDKs\imgui\imconfig.h">
+      <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="D:\SDK\imgui\imgui.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="F:\SDKs\imgui\imgui.h">
+      <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="D:\SDK\imgui\imgui_internal.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="F:\SDKs\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="D:\SDK\imgui\imstb_rectpack.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="F:\SDKs\imgui\imstb_rectpack.h">
+      <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="D:\SDK\imgui\imstb_textedit.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="F:\SDKs\imgui\imstb_textedit.h">
+      <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="D:\SDK\imgui\imstb_truetype.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="F:\SDKs\imgui\imstb_truetype.h">
+      <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="D:\SDK\imgui\examples\imgui_impl_glfw.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="F:\SDKs\imgui\examples\imgui_impl_glfw.h">
+      <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="D:\SDK\imgui\examples\imgui_impl_opengl3.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="showimage.hpp">
-      <Filter>头文件</Filter>
+    <ClInclude Include="F:\SDKs\imgui\examples\imgui_impl_opengl3.h">
+      <Filter>imgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -68,29 +71,29 @@
     <ClCompile Include="Shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="D:\SDK\glad\src\glad.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="cvclass\DetectionFrame.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="D:\SDK\imgui\imgui.cpp">
+    <ClCompile Include="F:\SDKs\glad\src\glad.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="D:\SDK\imgui\imgui_demo.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="F:\SDKs\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="D:\SDK\imgui\imgui_draw.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="F:\SDKs\imgui\imgui_demo.cpp">
+      <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="D:\SDK\imgui\imgui_widgets.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="F:\SDKs\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="D:\SDK\imgui\examples\imgui_impl_glfw.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="F:\SDKs\imgui\imgui_widgets.cpp">
+      <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="D:\SDK\imgui\examples\imgui_impl_opengl3.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="F:\SDKs\imgui\examples\imgui_impl_glfw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\SDKs\imgui\examples\imgui_impl_opengl3.cpp">
+      <Filter>imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -102,5 +105,17 @@
     <None Include="shader\shader01.glfs" />
     <None Include="shader\shader01.glvs" />
     <None Include="ClassDiagram.cd" />
+    <None Include="F:\SDKs\opencv\build\x64\vc15\bin\opencv_world440.dll">
+      <Filter>dll</Filter>
+    </None>
+    <None Include="F:\SDKs\opencv\build\x64\vc15\bin\opencv_world440.pdb">
+      <Filter>dll</Filter>
+    </None>
+    <None Include="F:\SDKs\opencv\build\x64\vc15\bin\opencv_world440d.dll">
+      <Filter>dll</Filter>
+    </None>
+    <None Include="F:\SDKs\opencv\build\x64\vc15\bin\opencv_world440d.pdb">
+      <Filter>dll</Filter>
+    </None>
   </ItemGroup>
 </Project>

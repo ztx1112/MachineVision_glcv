@@ -22,31 +22,32 @@
     <ProjectGuid>{629C8871-9BB9-4021-A877-796B85F6EE7E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>MachineVision_glcv</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -68,24 +69,24 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\SDK\glfw-3.3.2.bin.WIN64\include;D:\SDK\opencv\build\include;C:\Program Files\Daheng Imaging\GalaxySDK\Samples\C++ SDK;$(IncludePath)</IncludePath>
+    <IncludePath>D:\SDK\glfw-3.3.2.bin.WIN64\include;D:\SDK\opencv\build\include;C:\Program Files\Daheng Imaging\GalaxySDK\Samples\C++ SDK;$(IncludePath);F:\SDKs</IncludePath>
     <LibraryPath>D:\SDK\glfw-3.3.2.bin.WIN64\lib-vc2013;C:\Program Files\Daheng Imaging\GalaxySDK\Samples\C++ SDK\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\SDK\glfw-3.3.2\include;D:\SDK\opencv\build\include;C:\Program Files\Daheng Imaging\GalaxySDK\Samples\C++ SDK;$(IncludePath);D:\SDK\boost_1_71_0\boost;D:\SDK\glad\include;D:\SDK\glad\src;D:\SDK\imgui</IncludePath>
-    <LibraryPath>D:\SDK\glfw-3.3.2\lib-vc2015;C:\Program Files\Daheng Imaging\GalaxySDK\Samples\C++ SDK\lib\x64;D:\SDK\opencv\build\x64\vc14\lib;$(LibraryPath);C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10240.0\um\x64;D:\SDK\glfw-3.3.2\lib-vc2015</LibraryPath>
+    <IncludePath>F:\SDKs\glfw-master\include;f:\SDKs\opencv\build\include;C:\Program Files\Daheng Imaging\GalaxySDK\Samples\C++ SDK;$(IncludePath);f:\SDKs\boost_1_71_0\boost;f:\sdks\glad\include;f:\SDKs\glad\src;f:\SDKs\imgui;F:\SDKs</IncludePath>
+    <LibraryPath>F:\SDKs\glfw-build\libs\debug;C:\Program Files\Daheng Imaging\GalaxySDK\Samples\C++ SDK\lib\x64;F:\SDKs\opencv\build\x64\vc15\lib;$(LibraryPath);C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10240.0\um\x64;F:\SDKs\opencv\build\x64\vc15\bin</LibraryPath>
     <CodeAnalysisRuleSet>BasicDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\SDK\glfw-3.3.2.bin.WIN64\include;D:\SDK\opencv\build\include;C:\Program Files\Daheng Imaging\GalaxySDK\Samples\C++ SDK;$(IncludePath)</IncludePath>
+    <IncludePath>D:\SDK\glfw-3.3.2.bin.WIN64\include;D:\SDK\opencv\build\include;C:\Program Files\Daheng Imaging\GalaxySDK\Samples\C++ SDK;$(IncludePath);F:\SDKs</IncludePath>
     <LibraryPath>D:\SDK\glfw-3.3.2.bin.WIN64\lib-vc2013;C:\Program Files\Daheng Imaging\GalaxySDK\Samples\C++ SDK\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\SDK\glfw-3.3.2\include;D:\SDK\opencv\build\include;C:\Program Files\Daheng Imaging\GalaxySDK\Samples\C++ SDK;$(IncludePath);D:\SDK\imgui;D:\SDK\boost_1_71_0\boost;D:\SDK\glad\include;D:\SDK\glad\src;D:\SDK\imgui</IncludePath>
-    <LibraryPath>D:\SDK\glfw-3.3.2-build\src\Debug;C:\Program Files\Daheng Imaging\GalaxySDK\Samples\C++ SDK\lib\x64;D:\SDK\opencv\build\x64\vc14\lib;$(LibraryPath);C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10240.0\um\x64;D:\SDK\glfw-3.3.2\lib-vc2015</LibraryPath>
+    <IncludePath>F:\SDKs\glfw-master\include;f:\SDKs\opencv\build\include;C:\Program Files\Daheng Imaging\GalaxySDK\Samples\C++ SDK;$(IncludePath);f:\SDKs\imgui;f:\SDKs\glad\include;f:\SDKs\glad\src;F:\SDKs</IncludePath>
+    <LibraryPath>F:\SDKs\glfw-build\libs\Release;C:\Program Files\Daheng Imaging\GalaxySDK\Samples\C++ SDK\lib\x64;f:\SDK\opencv\build\x64\vc15\lib;$(LibraryPath);C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10240.0\um\x64;F:\SDKs\opencv\build\x64\vc15\bin</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -109,11 +110,12 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <CompileAs>CompileAsCpp</CompileAs>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;glfw3.lib;legacy_stdio_definitions.lib;opencv_world410d.lib;GxIAPICPPEx.lib;%(AdditionalDependencies);glfw3.lib;</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;glfw3.lib;legacy_stdio_definitions.lib;opencv_world440d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -150,7 +152,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>glu32.lib;opengl32.lib;glfw3.lib;legacy_stdio_definitions.lib;opencv_world410.lib;GxIAPICPPEx.lib;%(AdditionalDependencies);glfw3.lib;</AdditionalDependencies>
+      <AdditionalDependencies>glu32.lib;opengl32.lib;glfw3.lib;legacy_stdio_definitions.lib;opencv_world440.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -158,29 +160,28 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cvclass\DetectionFrame.h" />
-    <ClInclude Include="D:\SDK\imgui\examples\imgui_impl_glfw.h" />
-    <ClInclude Include="D:\SDK\imgui\examples\imgui_impl_opengl3.h" />
-    <ClInclude Include="D:\SDK\imgui\imconfig.h" />
-    <ClInclude Include="D:\SDK\imgui\imgui.h" />
-    <ClInclude Include="D:\SDK\imgui\imgui_internal.h" />
-    <ClInclude Include="D:\SDK\imgui\imstb_rectpack.h" />
-    <ClInclude Include="D:\SDK\imgui\imstb_textedit.h" />
-    <ClInclude Include="D:\SDK\imgui\imstb_truetype.h" />
+    <ClInclude Include="F:\SDKs\imgui\examples\imgui_impl_glfw.h" />
+    <ClInclude Include="F:\SDKs\imgui\examples\imgui_impl_opengl3.h" />
+    <ClInclude Include="F:\SDKs\imgui\imconfig.h" />
+    <ClInclude Include="F:\SDKs\imgui\imgui.h" />
+    <ClInclude Include="F:\SDKs\imgui\imgui_internal.h" />
+    <ClInclude Include="F:\SDKs\imgui\imstb_rectpack.h" />
+    <ClInclude Include="F:\SDKs\imgui\imstb_textedit.h" />
+    <ClInclude Include="F:\SDKs\imgui\imstb_truetype.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Shader.h" />
-    <ClInclude Include="showimage.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="D:\SDK\glad\src\glad.c" />
     <ClCompile Include="cvclass\DetectionFrame.cpp" />
-    <ClCompile Include="D:\SDK\imgui\examples\imgui_impl_glfw.cpp" />
-    <ClCompile Include="D:\SDK\imgui\examples\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="D:\SDK\imgui\imgui.cpp" />
-    <ClCompile Include="D:\SDK\imgui\imgui_demo.cpp" />
-    <ClCompile Include="D:\SDK\imgui\imgui_draw.cpp" />
-    <ClCompile Include="D:\SDK\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="F:\SDKs\glad\src\glad.c" />
+    <ClCompile Include="F:\SDKs\imgui\examples\imgui_impl_glfw.cpp" />
+    <ClCompile Include="F:\SDKs\imgui\examples\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="F:\SDKs\imgui\imgui.cpp" />
+    <ClCompile Include="F:\SDKs\imgui\imgui_demo.cpp" />
+    <ClCompile Include="F:\SDKs\imgui\imgui_draw.cpp" />
+    <ClCompile Include="F:\SDKs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="MachineVision_glcv.cpp" />
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
@@ -189,6 +190,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <CopyFileToFolders Include="F:\SDKs\opencv\build\x64\vc15\bin\opencv_world440.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <None Include="F:\SDKs\opencv\build\x64\vc15\bin\opencv_world440.pdb" />
+    <CopyFileToFolders Include="F:\SDKs\opencv\build\x64\vc15\bin\opencv_world440d.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <None Include="F:\SDKs\opencv\build\x64\vc15\bin\opencv_world440d.pdb" />
     <None Include="shader\shader01.glfs" />
     <None Include="shader\shader01.glvs" />
   </ItemGroup>

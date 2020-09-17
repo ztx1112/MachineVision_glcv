@@ -1,31 +1,28 @@
-ï»¿// MachineVision_glcv.cpp : å®šä¹‰æ§åˆ¶å°åº”ç”¨ç¨‹åºçš„å…¥å£ç‚¹ã€‚
+// MachineVision_glcv.cpp : ¶¨Òå¿ØÖÆÌ¨Ó¦ÓÃ³ÌĞòµÄÈë¿Úµã¡£
 //
 #include "stdafx.h"
-#include"resource.h"
+#include "resource.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "cvclass/DetectionFrame.h"
-#include"Shader.h"
-
+#include "Shader.h"
 
 using namespace cv;
 using namespace ImGui;
 
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);	//çª—å£å¤§å°æ”¹å˜å›è°ƒå‡½æ•°
-void keyboard_callback(GLFWwindow*, int, int, int,int);
-void mousebutton_callback(GLFWwindow*, int, int, int);
-void glfw_error_callback(int, const char*);
-
+void framebuffer_size_callback(GLFWwindow *window, int width, int height); //´°¿Ú´óĞ¡¸Ä±ä»Øµ÷º¯Êı
+void keyboard_callback(GLFWwindow *, int, int, int, int);
+void mousebutton_callback(GLFWwindow *, int, int, int);
+void glfw_error_callback(int, const char *);
 
 void showmenu();
 void showframe();
-DetectionFrame showimage(DetectionFrame&);
+DetectionFrame showimage(DetectionFrame &);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-HWND hwnd;			//å…¨å±€çª—å£å¥æŸ„
-HINSTANCE hinstance;	//å»å±€çª—å£å®ä¾‹
+HWND hwnd;			 //È«¾Ö´°¿Ú¾ä±ú
+HINSTANCE hinstance; //È¥¾Ö´°¿ÚÊµÀı
 Zopengl::Shader *shader;
 double win_width = SCR_WIDTH;
 double win_height = SCR_HEIGHT;
@@ -36,19 +33,18 @@ ImVec2 beginpos;
 ImVec2 endpos;
 ImVec2 mousepos;
 ImGuiIO io;
-ImFont* font2;
+ImFont *font2;
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 vector<DetectionFrame> Deteframes;
 int teststate;
 
 vector<unsigned int> textures;
 
-
-string test = "ç¤ºä¾‹";
+wstring test = L"Ê¾Àı";
 
 int main()
 {
-	const char* glsl_version = "#version 330";
+	const char *glsl_version = "#version 330";
 	// glfw: initialize and configure
 	// ------------------------------
 	glfwInit();
@@ -57,7 +53,7 @@ int main()
 
 	// glfw window creation
 	// --------------------
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Machine Vision", NULL, NULL);
+	GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Machine Vision", NULL, NULL);
 
 	if (window == NULL)
 	{
@@ -90,7 +86,6 @@ int main()
 	io = GetIO();
 	GetIO().Fonts->AddFontFromFileTTF("msyh.ttf", 14, NULL, GetIO().Fonts->GetGlyphRangesChineseFull());
 
-
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
@@ -110,6 +105,10 @@ int main()
 
 	Deteframes[0].camera.open(0);
 	Deteframes[0].camerarunstate = "multi";
+	if (!Deteframes[0].camera.isOpened())
+	{
+		cout << "failed open camera" << endl;
+	}
 
 	// render loop
 	// -----------
@@ -118,7 +117,6 @@ int main()
 
 		glfwPollEvents();
 
-
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -126,7 +124,7 @@ int main()
 
 		showmenu();
 
-		ImVec2 pos{ 0,20 };
+		ImVec2 pos{0, 20};
 		SetNextWindowPos(pos);
 
 		if (Deteframes.size() > 0)
@@ -149,9 +147,8 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-
 		glfwSwapBuffers(window);
-		
+
 		if (Deteframes.size() > 0)
 		{
 			for (vector<DetectionFrame>::iterator iter = Deteframes.begin(); iter != Deteframes.end(); ++iter)
@@ -159,7 +156,6 @@ int main()
 				glDeleteTextures(1, &iter->texture);
 			}
 		}
-
 	}
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
@@ -168,9 +164,9 @@ int main()
 	return 0;
 }
 
-// å¤„ç†æ‰€æœ‰è¾“å…¥ï¼šæŸ¥è¯¢GLFWæ­¤å¸§æ˜¯å¦æŒ‰ä¸‹/é‡Šæ”¾ç›¸å…³é”®å¹¶æ ¹æ®æ˜¯çš„
+// ´¦ÀíËùÓĞÊäÈë£º²éÑ¯GLFW´ËÖ¡ÊÇ·ñ°´ÏÂ/ÊÍ·ÅÏà¹Ø¼ü²¢¸ù¾İÊÇµÄ
 // ---------------------------------------------------------------------------------------------------------
-void keyboard_callback(GLFWwindow *window,int key,int scancode,int action,int modsBit)
+void keyboard_callback(GLFWwindow *window, int key, int scancode, int action, int modsBit)
 {
 	switch (key)
 	{
@@ -181,12 +177,11 @@ void keyboard_callback(GLFWwindow *window,int key,int scancode,int action,int mo
 	default:
 		break;
 	}
-
 }
 
 void mousebutton_callback(GLFWwindow *window, int button, int action, int modsBit)
 {
-	
+
 	switch (button)
 	{
 	case GLFW_MOUSE_BUTTON_LEFT:
@@ -195,7 +190,6 @@ void mousebutton_callback(GLFWwindow *window, int button, int action, int modsBi
 		{
 		case GLFW_PRESS:
 		{
-
 		}
 		case GLFW_RELEASE:
 		{
@@ -212,7 +206,6 @@ void mousebutton_callback(GLFWwindow *window, int button, int action, int modsBi
 		{
 		case GLFW_PRESS:
 		{
-
 		}
 		case GLFW_RELEASE:
 		{
@@ -228,23 +221,21 @@ void mousebutton_callback(GLFWwindow *window, int button, int action, int modsBi
 	}
 }
 
-void glfw_error_callback(int errcode, const char * msg)
+void glfw_error_callback(int errcode, const char *msg)
 {
 	cout << endl;
 	cout << "ERROR: " << errcode << "  " << msg << endl;
 }
 
-// glfwï¼šæ¯å½“çª—å£å¤§å°æ”¹å˜æ—¶ï¼ˆé€šè¿‡æ“ä½œç³»ç»Ÿæˆ–ç”¨æˆ·è°ƒæ•´å¤§å°ï¼‰ï¼Œè¿™ä¸ªå›è°ƒå‡½æ•°å°±ä¼šæ‰§è¡Œ
+// glfw£ºÃ¿µ±´°¿Ú´óĞ¡¸Ä±äÊ±£¨Í¨¹ı²Ù×÷ÏµÍ³»òÓÃ»§µ÷Õû´óĞ¡£©£¬Õâ¸ö»Øµ÷º¯Êı¾Í»áÖ´ĞĞ
 // ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
-	//ç¡®ä¿è§†çª—ä¸æ–°çš„è§†çª—å°ºå¯¸ç›¸åŒ¹é…ï¼›æ³¨æ„å®½åº¦å’Œ
-	//é«˜åº¦å°†æ˜æ˜¾å¤§äºè§†ç½‘è†œæ˜¾ç¤ºå™¨ä¸ŠæŒ‡å®šçš„é«˜åº¦ã€‚
+	//È·±£ÊÓ´°ÓëĞÂµÄÊÓ´°³ß´çÏàÆ¥Åä£»×¢Òâ¿í¶ÈºÍ
+	//¸ß¶È½«Ã÷ÏÔ´óÓÚÊÓÍøÄ¤ÏÔÊ¾Æ÷ÉÏÖ¸¶¨µÄ¸ß¶È¡£
 	glViewport(0, 0, width, height);
 }
 
-
-		
 void showmenu()
 {
 	// Menu Bar
@@ -254,7 +245,7 @@ void showmenu()
 		{
 			ImGui::EndMenu();
 		}
-		if (ImGui::BeginMenu(test.c_str()))
+		if (ImGui::BeginMenu(u8"Ê¾Àı"))
 		{
 			ImGui::MenuItem("Main menu bar");
 			ImGui::MenuItem("Console");
@@ -265,11 +256,10 @@ void showmenu()
 	}
 }
 
-
 void showframe()
 {
 	ImGui::Begin("othe frame");
-	ImGui::Text(u8"æµ‹è¯•æ–‡æœ¬\næµ‹è¯•å·æˆ–æˆ–æˆ–æˆ–æˆ–");
+	ImGui::Text(u8"²âÊÔÎÄ±¾\n²âÊÔºÅ»ò»ò»ò»ò»ò");
 	if (IsItemClicked(0))
 	{
 		cout << GetIO().MousePos.x << "   " << GetIO().MousePos.y << endl;
@@ -277,12 +267,11 @@ void showframe()
 	ImGui::End();
 }
 
-
 DetectionFrame showimage(DetectionFrame &userdata)
 {
 	if (userdata.camerarunstate == "single")
 	{
-		if(userdata.camerastate==0)
+		if (userdata.camerastate == 0)
 		{
 			userdata.camera >> userdata.imagesource;
 			userdata.camerastate = 1;
@@ -318,7 +307,7 @@ DetectionFrame showimage(DetectionFrame &userdata)
 	Begin(userdata.name.c_str(), 0, userdata.winflag);
 	ImVec2 size{
 		static_cast<float>(userdata.image.cols),
-		static_cast<float>(userdata.image.rows) };
+		static_cast<float>(userdata.image.rows)};
 	ImGui::Image((void *)(intptr_t)userdata.texture, size);
 
 	auto scrollx = GetScrollX();
@@ -332,7 +321,7 @@ DetectionFrame showimage(DetectionFrame &userdata)
 		if (GetIO().MouseDown[0] && userdata.state == 0)
 		{
 			beginpos = mousepos;
-			userdata.state=FRAMESTATE_DRAWINGRECT;
+			userdata.state = FRAMESTATE_DRAWINGRECT;
 		}
 		else
 		{
@@ -355,6 +344,30 @@ DetectionFrame showimage(DetectionFrame &userdata)
 				userdata.state = 0;
 			}
 		}
+	}
+
+	bool b = true;
+	if (BeginPopupContextWindow("right menu"))
+	{
+		if (userdata.camerarunstate == "multi"&&b)
+		{
+			if (Button(u8"µ¥´Î²É¼¯"))
+			{
+				userdata.camerarunstate = "single";
+				b = false;
+			}
+		}
+		if (userdata.camerarunstate == "single"&&b)
+		{
+			if (Button(u8"Á¬Ğø²É¼¯"))
+			{
+				userdata.camerarunstate = "multi";
+				b = false;
+			}
+		}
+		if (!b)CloseCurrentPopup();
+		EndPopup();
+
 	}
 	End();
 
