@@ -27,16 +27,20 @@ Zopengl::Shader *shader;
 double win_width = SCR_WIDTH;
 double win_height = SCR_HEIGHT;
 float titleheigh = 45;
-float border = 4;
+float border_y = 4;
+float border_x = 10;
 int state = 0;
 ImVec2 beginpos;
 ImVec2 endpos;
 ImVec2 mousepos;
+float mousedistance = 10;
 ImGuiIO io;
 ImFont *font2;
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 vector<DetectionFrame> Deteframes;
 int teststate;
+//ImGuiIO& io;
+
 
 vector<unsigned int> textures;
 
@@ -313,19 +317,22 @@ DetectionFrame showimage(DetectionFrame &userdata)
 	auto scrollx = GetScrollX();
 	auto scrolly = GetScrollY();
 
-	mousepos.x = GetIO().MousePos.x - GetCursorScreenPos().x;
-	mousepos.y = GetIO().MousePos.y - titleheigh - border + scrolly;
+	io = GetIO();
+	mousepos.x = io.MousePos.x - border_x + scrollx;
+	mousepos.y = io.MousePos.y - titleheigh - border_y + scrolly;
 
 	if (IsItemHovered())
 	{
-		if (GetIO().MouseDown[0] && userdata.state == 0)
+		if (io.MouseDown[0] && io.MousePos.y + scrolly < titleheigh + border_y)userdata.state = FRAMESTATE_OTHER;
+		if (io.MouseDown[0] && userdata.state == 0 )
 		{
 			beginpos = mousepos;
 			userdata.state = FRAMESTATE_DRAWINGRECT;
 		}
 		else
 		{
-			if (GetIO().MouseDown[0] && userdata.state == FRAMESTATE_DRAWINGRECT)
+			//if (GetIO().MouseDown[0] && mousepos.y < titleheigh)userdata.state = FRAMESTATE_OTHER;
+			if (io.MouseDown[0] && userdata.state == FRAMESTATE_DRAWINGRECT)
 			{
 				cvtColor(data, userdata.image, COLOR_GRAY2RGB);
 				cv::rectangle(userdata.image, Point2f(beginpos.x, beginpos.y), Point2f(mousepos.x, mousepos.y), Scalar(255, 0, 0), 1, LINE_8, 0);
@@ -336,7 +343,10 @@ DetectionFrame showimage(DetectionFrame &userdata)
 			if (userdata.state == FRAMESTATE_DRAWINGRECT)
 			{
 				endpos = mousepos;
-				userdata.rois.push_back(ImVec4(beginpos.x, beginpos.y, endpos.x, endpos.y));
+				if (endpos.x - beginpos.x > mousedistance && endpos.y - beginpos.y > mousedistance)
+				{
+					userdata.rois.push_back(ImVec4(beginpos.x, beginpos.y, endpos.x, endpos.y));
+				}
 				userdata.state = 0;
 			}
 			else
@@ -351,7 +361,7 @@ DetectionFrame showimage(DetectionFrame &userdata)
 	{
 		if (userdata.camerarunstate == "multi"&&b)
 		{
-			if (Button(u8"单次采集"))
+			if (Selectable(u8"单次采集"))
 			{
 				userdata.camerarunstate = "single";
 				b = false;
@@ -359,7 +369,7 @@ DetectionFrame showimage(DetectionFrame &userdata)
 		}
 		if (userdata.camerarunstate == "single"&&b)
 		{
-			if (Button(u8"连续采集"))
+			if (Selectable(u8"连续采集"))
 			{
 				userdata.camerarunstate = "multi";
 				b = false;

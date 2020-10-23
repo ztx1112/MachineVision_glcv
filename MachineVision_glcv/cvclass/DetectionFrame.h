@@ -16,6 +16,8 @@ using namespace cv;
 
 #define FRAMESTATE_DRAWINGRECT	20
 
+#define FRAMESTATE_OTHER		100
+
 
 class DetectionFrame
 {
